@@ -1,14 +1,13 @@
 package com.eunwoojeon.kanban.database;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -19,7 +18,9 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "users")
-    public static class User {
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UserEntity {
         @Id
         private long id;
         @Column(nullable = false)
@@ -28,10 +29,17 @@ public class Entities {
         private String email;
         @Column(nullable = false)
         private String password;
+        @Builder.Default
+        private String role = "ROLE_CLIENT";
+
         @CreatedDate
-        private LocalDateTime createdAt;
+        @Builder.Default
+        @Column(name = "created_at", nullable = false, updatable = false)
+        private LocalDateTime createdAt = LocalDateTime.now();
         @LastModifiedDate
-        private LocalDateTime updatedAt;
+        @Builder.Default
+        @Column(name = "updated_at", nullable = false)
+        private LocalDateTime updatedAt = LocalDateTime.now();
     }
 
     @Entity
@@ -40,12 +48,18 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "boards")
-    public static class Board {
+    public static class BoardEntity {
         @Id
         private long id;
-        private String username;
-        private String email;
-        private String password;
+        @Column(nullable = false)
+        private String title;
+        @Column(columnDefinition = "TEXT")
+        private String description;
+        @ManyToOne
+        @JoinColumn(name = "author_id")
+        private UserEntity userJoinColumn;
+        @OneToMany(mappedBy = "boardJoinColumn", cascade = CascadeType.ALL)
+        private Set<ListEntity> lists;
         @CreatedDate
         @Builder.Default
         @Column(name = "created_at", nullable = false, updatable = false)
@@ -62,21 +76,32 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "board_members")
-    @IdClass(BoardMember.class)
-    public static class BoardMember {
+    @IdClass(BoardMemberId.class)
+    public static class BoardMemberEntity {
         @Id
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user;
+        private UserEntity userJoinColumn;
 
         @Id
         @ManyToOne
         @JoinColumn(name = "board_id")
-        private Board board;
+        private BoardEntity boardJoinColumn;
 
-        @Column(nullable = false)
         @Builder.Default
-        private String role = "member";
+        @Column(columnDefinition = "VARCHAR", nullable = false)
+        private Role role = Role.MEMBER;
+    }
+
+    enum Role {
+        MEMBER, MANAGER;
+    }
+
+    public class BoardMemberId implements Serializable {
+        @Column(name = "user_id")
+        private long userJoinColumn;
+        @Column(name = "board_id")
+        private long boardJoinColumn;
     }
 
     @Entity
@@ -94,13 +119,13 @@ public class Entities {
 
         @ManyToOne
         @JoinColumn(name = "board_id")
-        private Board board;
+        private BoardEntity boardJoinColumn;
 
         @Column
         private Integer position;
 
-        @OneToMany(mappedBy = "list", cascade = CascadeType.ALL)
-        private Set<Card> cards;
+        @OneToMany(mappedBy = "listJoinColumn", cascade = CascadeType.ALL)
+        private Set<CardEntity> cardEntities;
     }
 
     @Entity
@@ -108,9 +133,8 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "cards")
-    public static class Card {
+    public static class CardEntity {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
         @Column(nullable = false)
@@ -121,13 +145,13 @@ public class Entities {
 
         @ManyToOne
         @JoinColumn(name = "list_id")
-        private ListEntity list;
+        private ListEntity listJoinColumn;
 
         @Column
         private Integer position;
 
-        @OneToMany(mappedBy = "card", cascade = CascadeType.ALL)
-        private Set<Comment> comments;
+        @OneToMany(mappedBy = "cardJoinColumn", cascade = CascadeType.ALL)
+        private Set<CommentEntity> commentEntities;
 
         @CreatedDate
         @Builder.Default
@@ -151,9 +175,8 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "comments")
-    public static class Comment {
+    public static class CommentEntity {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
         @Column(columnDefinition = "TEXT", nullable = false)
@@ -161,11 +184,11 @@ public class Entities {
 
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user;
+        private UserEntity userJoinColumn;
 
         @ManyToOne
         @JoinColumn(name = "card_id")
-        private Card card;
+        private CardEntity cardJoinColumn;
 
         @CreatedDate
         @Builder.Default
@@ -183,19 +206,18 @@ public class Entities {
     @Setter
     @Builder
     @Table(name = "activities")
-    public static class Activity {
+    public static class ActivityEntity {
 
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
         @ManyToOne
         @JoinColumn(name = "user_id")
-        private User user;
+        private UserEntity userJoinColumn;
 
         @ManyToOne
         @JoinColumn(name = "board_id")
-        private Board board;
+        private BoardEntity boardJoinColumn;
 
         @Column(nullable = false)
         private String action;
