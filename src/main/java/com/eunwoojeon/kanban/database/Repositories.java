@@ -14,7 +14,6 @@ public interface Repositories {
     @Configurable(autowire = Autowire.BY_TYPE)
     public interface UserRepository extends JpaRepository<UserEntity, Long> {
         Boolean existsByEmail(String email);
-        UserEntity findByEmail(String email);
         UserEntity findByUsername(String username);
     }
 }

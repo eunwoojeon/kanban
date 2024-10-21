@@ -4,7 +4,6 @@ import com.eunwoojeon.kanban.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +14,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.Collection;
 import java.util.Iterator;
 
+/*
+1. (@EnableWebSecurity)security configuration에서 HttpSecurity객체 LoginFilter(=UsernamePasswordAuthenticationFilter)
+2. filter에서 credentials를 수신하면 username, password를 담은 UsernamePasswordAuthenticationToken을 생성하여 authenticationManager에 전달
+3. authenticationManager에서 인증 여부에 따라 AuthenticationSuccessHandler/AuthenticationFailureHandler가 호출
+4. unsuccessfulAuthentication/unsuccessfulAuthentication이 실행된다.
+*/
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;

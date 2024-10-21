@@ -29,7 +29,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // request에서 Authorization 헤더 추출
         String authorization = request.getHeader("Authorization");
 
-        // Authorization 검증
+        // Authorization Header 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             System.out.println("token null");
             filterChain.doFilter(request, response); // 필터 종료 후 다음 필터에 전달
@@ -45,6 +45,7 @@ public class JWTFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response); // 필터 종료 후 다음 필터에 전달
             return;
         }
+        // 인증 성공
 
         // username, role 추출
         String username = jwtUtil.getUsername(token);
