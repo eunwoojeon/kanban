@@ -1,18 +1,22 @@
 package com.eunwoojeon.kanban.controller;
 
+import com.eunwoojeon.kanban.dto.DTO.UserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
-    @PostMapping("/logintest")
-    public Boolean requestLogin(@RequestBody String username, @RequestBody String password) {
+    @PostMapping("/login")
+    public Boolean requestLogin(@RequestBody UserDTO userDTO) {
         System.out.println("login");
-        System.out.println(username);
-        System.out.println(password);
+        System.out.println(userDTO.getUsername());
+        System.out.println(userDTO.getPassword());
         return true;
     }
 

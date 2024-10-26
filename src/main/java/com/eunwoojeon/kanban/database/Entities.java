@@ -25,9 +25,6 @@ public class Entities {
         private long id;
         @Column(nullable = false, unique = true)
         private String username;
-        @Column(unique = true)
-        @Builder.Default
-        private String email = "";
         @Column(nullable = false, unique = true)
         private String password;
         @Builder.Default

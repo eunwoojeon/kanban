@@ -16,16 +16,14 @@ public class JoinService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public boolean joinProcess(JoinDTO joinDTO) {
-        String email = joinDTO.getEmail();
-        String password = joinDTO.getPassword();
         String username = joinDTO.getUsername();
+        String password = joinDTO.getPassword();
 
         Boolean isExist = userRepository.existsByUsername(username);
 
         if (isExist) return false;
 
         UserEntity user = UserEntity.builder()
-                .email(email)
                 .username(username)
                 .password(bCryptPasswordEncoder.encode(password)) // 해시 함수로 암호화
                 .role("ROLE_ADMIN")

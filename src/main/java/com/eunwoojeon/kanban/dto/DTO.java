@@ -10,9 +10,8 @@ public class DTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class JoinDTO {
-        private String email;
-        private String password;
         private String username;
+        private String password;
     }
 
     @Getter
@@ -21,7 +20,7 @@ public class DTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class UserDTO {
-        private String email;
         private String username;
+        private String password;
     }
 }

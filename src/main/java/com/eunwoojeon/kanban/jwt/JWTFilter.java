@@ -53,7 +53,6 @@ public class JWTFilter extends OncePerRequestFilter {
         UserEntity userEntity = UserEntity.builder()
                 .username(username)
                 .role(role)
-                .email("tempemail")
                 .password("temppassword")
                 .build();
 
