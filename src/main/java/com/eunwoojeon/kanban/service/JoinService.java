@@ -1,8 +1,8 @@
 package com.eunwoojeon.kanban.service;
 
-import com.eunwoojeon.kanban.database.Entities.*;
-import com.eunwoojeon.kanban.database.Repositories.*;
-import com.eunwoojeon.kanban.dto.DTO.*;
+import com.eunwoojeon.kanban.database.Entities.UserEntity;
+import com.eunwoojeon.kanban.database.Repositories.UserRepository;
+import com.eunwoojeon.kanban.dto.DTO.JoinDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
