@@ -3,20 +3,18 @@ package com.eunwoojeon.kanban.controller;
 import com.eunwoojeon.kanban.dto.DTO;
 import com.eunwoojeon.kanban.service.JoinService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("/kanban/user")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private JoinService joinService;
+    private final JoinService joinService;
 
-    @RequestMapping(value = "/join", method = {RequestMethod.POST})
-    public String join(DTO.JoinDTO joinDTO) {
+    @PostMapping("/join")
+    public String join(@RequestBody DTO.JoinDTO joinDTO, HttpServletRequest request) {
         boolean result = joinService.joinProcess(joinDTO);
         if (result) {
             return "ok";
@@ -25,13 +23,17 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/login", method = {RequestMethod.GET})
-    public void requestLogin(HttpServletRequest request) {
+    @PostMapping("/logintest")
+    public Boolean requestLogin(@RequestBody String username, @RequestBody String password) {
         System.out.println("login");
+        System.out.println(username);
+        System.out.println(password);
+        return true;
     }
 
-    @RequestMapping(value = "/logout", method = {RequestMethod.GET})
-    public void requestLogout(HttpServletRequest request) {
-
+    @GetMapping("/logout")
+    public Boolean requestLogout(HttpServletRequest request) {
+        System.out.println("logout");
+        return true;
     }
 }

@@ -20,7 +20,7 @@ public class JoinService {
         String password = joinDTO.getPassword();
         String username = joinDTO.getUsername();
 
-        Boolean isExist = userRepository.existsByEmail(email);
+        Boolean isExist = userRepository.existsByUsername(username);
 
         if (isExist) return false;
 

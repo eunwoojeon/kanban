@@ -22,6 +22,7 @@ public class Entities {
     @AllArgsConstructor
     public static class UserEntity {
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private long id;
         @Column(nullable = false, unique = true)
         private String username;
@@ -51,6 +52,7 @@ public class Entities {
     @Table(name = "boards")
     public static class BoardEntity {
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private long id;
         @Column(nullable = false)
         private String title;
@@ -112,7 +114,7 @@ public class Entities {
     @Table(name = "lists")
     public static class ListEntity {
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
         @Column(nullable = false)
@@ -136,6 +138,7 @@ public class Entities {
     @Table(name = "cards")
     public static class CardEntity {
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
         @Column(nullable = false)
@@ -178,6 +181,7 @@ public class Entities {
     @Table(name = "comments")
     public static class CommentEntity {
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
         @Column(columnDefinition = "TEXT", nullable = false)
@@ -210,6 +214,7 @@ public class Entities {
     public static class ActivityEntity {
 
         @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
         @ManyToOne
