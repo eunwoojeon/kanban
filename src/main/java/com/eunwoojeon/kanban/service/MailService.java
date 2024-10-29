@@ -7,10 +7,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
 public class MailService {
+
+    ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
 
     private final JavaMailSender javaMailSender;
     private static final String senderEmail = "SimpleKanban@gmail.com";
@@ -24,13 +28,13 @@ public class MailService {
         return LocalDateTime.now().plusMinutes(10); // 만료 시간 10분
     }
 
-    public MimeMessage CreateMail(String mail) {
+    public MimeMessage CreateMail(String address) {
         createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
             message.setFrom(senderEmail);
-            message.setRecipients(MimeMessage.RecipientType.TO, mail);
+            message.setRecipients(MimeMessage.RecipientType.TO, address);
             message.setSubject("Simple Kanban 이메일 인증");
 
             String body = "";
@@ -45,9 +49,11 @@ public class MailService {
         return message;
     }
 
-    public int sendMail(String mail) {
-        MimeMessage message = CreateMail(mail);
-        javaMailSender.send(message);
+    public int sendMail(String address) {
+        executorService.execute(() -> {
+            MimeMessage message = CreateMail(address);
+            javaMailSender.send(message);
+        });
 
         return number;
     }

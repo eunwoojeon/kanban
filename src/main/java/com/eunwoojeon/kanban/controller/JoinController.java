@@ -20,9 +20,13 @@ public class JoinController {
 
     private int number;
     private LocalDateTime expireTime;
+    private boolean isVerified;
 
     @PostMapping("/join")
     public String join(@RequestBody DTO.JoinDTO joinDTO, HttpServletRequest request) {
+        if (!isVerified) {
+            return "no";
+        }
         boolean result = joinService.joinProcess(joinDTO);
         if (result) {
             return "ok";
@@ -32,18 +36,15 @@ public class JoinController {
     }
 
     @PostMapping("/mailsend")
-    public HashMap<String, Object> mailSend(String mail) {
+    public HashMap<String, Object> mailSend(@RequestParam String address) {
         HashMap<String, Object> map = new HashMap<>();
+        isVerified = false;
 
         try {
-            number = mailService.sendMail(mail); // 인증 메일 전송
+            number = mailService.sendMail(address); // 인증 메일 전송
             String num = String.valueOf(number);
-
-            map.put("result", Boolean.TRUE);
-            map.put("number", num);
         } catch (Exception e) {
-            map.put("result", Boolean.FALSE);
-            map.put("error", e.getMessage());
+            System.out.println(e.toString());
         }
 
         expireTime = mailService.getExpireTime();
@@ -58,6 +59,7 @@ public class JoinController {
         HashMap<String, Boolean> body = new HashMap<>();
         body.put("ISMATCH", isMatch);
         body.put("ISEXPIRED", isExpired);
+        isVerified = true;
 
         return ResponseEntity.ok(body);
     }

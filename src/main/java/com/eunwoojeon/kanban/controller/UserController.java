@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @PostMapping("/login")
-    public Boolean requestLogin(@RequestBody UserDTO userDTO) {
+    public Boolean requestLogin(@RequestBody String username, @RequestBody String password) {
         System.out.println("login");
-        System.out.println(userDTO.getUsername());
-        System.out.println(userDTO.getPassword());
+        System.out.println(username);
+        System.out.println(password);
         return true;
     }
 
