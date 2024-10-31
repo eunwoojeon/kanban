@@ -5,6 +5,7 @@ import com.eunwoojeon.kanban.service.JoinService;
 import com.eunwoojeon.kanban.service.MailService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,42 +24,46 @@ public class JoinController {
     private boolean isVerified;
 
     @PostMapping("/join")
-    public String join(@RequestBody DTO.JoinDTO joinDTO, HttpServletRequest request) {
+    public boolean join(@RequestBody DTO.JoinDTO joinDTO, HttpServletRequest request) {
         if (!isVerified) {
-            return "no";
+            return false;
         }
+
         boolean result = joinService.joinProcess(joinDTO);
         if (result) {
-            return "ok";
+            return true;
         } else {
-            return "no";
+            return false;
         }
     }
 
-    @PostMapping("/mailsend")
-    public HashMap<String, Object> mailSend(@RequestParam String address) {
-        HashMap<String, Object> map = new HashMap<>();
+    @GetMapping("/mailsend")
+    public boolean mailSend(@RequestParam(value = "email") String address) {
         isVerified = false;
+        boolean isDuplicated = joinService.isExistEmail(address);
+        if (isDuplicated) {
+            return false;
+        }
 
         try {
             number = mailService.sendMail(address); // 인증 메일 전송
-            String num = String.valueOf(number);
+            expireTime = mailService.getExpireTime();
         } catch (Exception e) {
-            System.out.println(e.toString());
+            return false;
         }
 
-        expireTime = mailService.getExpireTime();
-        return map;
+        return true;
     }
 
     @GetMapping("/mailcheck")
-    public ResponseEntity<?> mailCheck(@RequestParam String userNumber) {
+    public ResponseEntity<?> mailCheck(@RequestParam(value = "code") String userNumber) {
         boolean isMatch = userNumber.equals(String.valueOf(number));
         boolean isExpired = expireTime.isBefore(LocalDateTime.now()); // 만료 여부
 
         HashMap<String, Boolean> body = new HashMap<>();
-        body.put("ISMATCH", isMatch);
-        body.put("ISEXPIRED", isExpired);
+        body.put("result", isMatch && !isExpired);
+        body.put("isExpired", isExpired);
+        body.put("isMatch", isMatch);
         isVerified = true;
 
         return ResponseEntity.ok(body);

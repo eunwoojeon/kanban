@@ -25,11 +25,10 @@ public class MailService {
     }
 
     public LocalDateTime getExpireTime() {
-        return LocalDateTime.now().plusMinutes(10); // 만료 시간 10분
+        return LocalDateTime.now().plusMinutes(5); // 만료 시간 5분
     }
 
     public MimeMessage CreateMail(String address) {
-        createNumber();
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
@@ -40,7 +39,7 @@ public class MailService {
             String body = "";
             body += "<h3>" + "이메일 인증 코드를 입력하세요." + "</h3>";
             body += "<h1>" + number + "</h1>";
-            body += "<h3>" + "인증 코드는 10분 뒤 만료됩니다. 감사합니다." + "</h3>";
+            body += "<h3>" + "인증 코드는 5분 뒤 만료됩니다. 감사합니다." + "</h3>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
             throw new RuntimeException(e);
@@ -50,6 +49,7 @@ public class MailService {
     }
 
     public int sendMail(String address) {
+        createNumber();
         executorService.execute(() -> {
             MimeMessage message = CreateMail(address);
             javaMailSender.send(message);

@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 
 import com.eunwoojeon.kanban.database.Entities.*;
 
-@Configurable(autowire = Autowire.BY_TYPE)
+@Configurable
 public interface Repositories {
 
     @Repository
-    @Configurable(autowire = Autowire.BY_TYPE)
+    @Configurable
     public interface UserRepository extends JpaRepository<UserEntity, Long> {
         Boolean existsByUsername(String username);
         UserEntity findByUsername(String username);

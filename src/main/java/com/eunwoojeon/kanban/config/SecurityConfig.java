@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 5. 인증 실패시 SecurityContextHolder를 clear하고 AuthenticationFailureHandler를 호출한다.
 */
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
     // AuthenticationManager가 인자로 받을 AuthenticationConfiguration 객체 생성자 주입
@@ -54,7 +54,7 @@ public class SecurityConfig {
 
         // 경로 인가 작업
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/join", "/login", "/logout", "/mailsend", "/mailcheck").permitAll() // 접근 허용 path
+                .requestMatchers("/", "/join", "/login", "/logout", "/mailsend", "/mailcheck", "/possiblemailcheck").permitAll() // 접근 허용 path
                 .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 권한을 가진 사용자만 접근 허용
                 .anyRequest().authenticated() // 나머지 요청에 대해서는 인증된 사용자만 접근 허용
         );

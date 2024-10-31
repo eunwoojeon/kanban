@@ -23,18 +23,22 @@ public class Entities {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private long id;
+
         @Column(nullable = false, unique = true)
         private String username;
-        @Column(nullable = false, unique = true)
-        private String password;
-        @Builder.Default
-        private String role = "ROLE_CLIENT";
 
-        @Column(name = "created_at", nullable = false, updatable = false)
+        @Column(nullable = false)
+        private String password;
+
+        @Builder.Default
+        private String role = "ROLE_USER";
+
+        @Column(name = "created_at")
         @CreatedDate
         @Builder.Default
         private LocalDateTime createdAt = LocalDateTime.now();
-        @Column(name = "updated_at", nullable = false)
+
+        @Column(name = "updated_at")
         @LastModifiedDate
         @Builder.Default
         private LocalDateTime updatedAt = LocalDateTime.now();
@@ -50,23 +54,28 @@ public class Entities {
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
         private long id;
+
         @Column(nullable = false)
         private String title;
+
         @Column(columnDefinition = "TEXT")
         private String description;
+
         @ManyToOne
         @JoinColumn(name = "author_id")
         private UserEntity userJoinColumn;
+
         @OneToMany(mappedBy = "boardJoinColumn", cascade = CascadeType.ALL)
         private Set<ListEntity> lists;
+
         @CreatedDate
         @Builder.Default
-        @Column(name = "created_at", nullable = false, updatable = false)
+        @Column(name = "created_at")
         private LocalDateTime createdAt = LocalDateTime.now();
 
         @LastModifiedDate
         @Builder.Default
-        @Column(name = "updated_at", nullable = false)
+        @Column(name = "updated_at")
         private LocalDateTime updatedAt = LocalDateTime.now();
     }
 
@@ -87,18 +96,21 @@ public class Entities {
         @JoinColumn(name = "board_id")
         private BoardEntity boardJoinColumn;
 
-        @Builder.Default
-        @Column(columnDefinition = "VARCHAR", nullable = false)
-        private Role role = Role.MEMBER;
+        @Column(columnDefinition = "VARCHAR")
+        @Embedded
+        private Role role;
     }
 
-    enum Role {
-        MEMBER, MANAGER;
+    @Embeddable
+    public class Role {
+        private String member;
+        private String manager;
     }
 
     public class BoardMemberId implements Serializable {
         @Column(name = "user_id")
         private long userJoinColumn;
+
         @Column(name = "board_id")
         private long boardJoinColumn;
     }
@@ -155,12 +167,12 @@ public class Entities {
 
         @CreatedDate
         @Builder.Default
-        @Column(name = "created_at", nullable = false, updatable = false)
+        @Column(name = "created_at")
         private LocalDateTime createdAt = LocalDateTime.now();
 
         @LastModifiedDate
         @Builder.Default
-        @Column(name = "updated_at", nullable = false)
+        @Column(name = "updated_at")
         private LocalDateTime updatedAt = LocalDateTime.now();
 
         @PreUpdate
@@ -180,7 +192,7 @@ public class Entities {
         @GeneratedValue(strategy = GenerationType.AUTO)
         private Long id;
 
-        @Column(columnDefinition = "TEXT", nullable = false)
+        @Column(columnDefinition = "TEXT")
         private String content;
 
         @ManyToOne
@@ -193,12 +205,12 @@ public class Entities {
 
         @CreatedDate
         @Builder.Default
-        @Column(name = "created_at", nullable = false, updatable = false)
+        @Column(name = "created_at")
         private LocalDateTime createdAt = LocalDateTime.now();
 
         @LastModifiedDate
         @Builder.Default
-        @Column(name = "updated_at", nullable = false)
+        @Column(name = "updated_at")
         private LocalDateTime updatedAt = LocalDateTime.now();
     }
 
@@ -221,12 +233,12 @@ public class Entities {
         @JoinColumn(name = "board_id")
         private BoardEntity boardJoinColumn;
 
-        @Column(nullable = false)
+        @Column
         private String action;
 
         @CreatedDate
         @Builder.Default
-        @Column(name = "created_at", nullable = false, updatable = false)
+        @Column(name = "created_at")
         private LocalDateTime createdAt = LocalDateTime.now();
     }
 }
